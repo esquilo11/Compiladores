@@ -77,7 +77,7 @@ public class SemanticTest {
 		try{
 			prog = parser.program();
 		}catch(Exception e){
-		//	e.printStackTrace();
+	
 		}
 		if(parser_error_flag == 1){
 			System.err.println("Compilation halted due to lex and parse errors");
@@ -133,7 +133,3 @@ public class SemanticTest {
 		}
 	}		
 }
-
-//objectid, typeid, int_const, string_const, bool_const
-//	static String[] TOKENS = {"ERROR", "TYPEID", "OBJECTID", "BOOL_CONST", "INT_CONST", "STR_CONST", "'('", "')'", "':'", "'@'", "';'", "','", "'+'", "'-'", "'*'", "'/'", "'~'", "'<'", "'='", "'{'", "'}'", "'.'", "DARROW", "LE", "ASSIGN", "CLASS", "ELSE", "FI", "IF", "IN", "INHERITS", "LET", "LOOP", "POOL", "THEN", "WHILE", "CASE", "ESAC", "OF", "NEW", "ISVOID", "NOT"
-//	};
