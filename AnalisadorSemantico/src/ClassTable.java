@@ -2,11 +2,6 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Enumeration;
 
-/**
- * This class may be used to contain the semantic information such as the
- * inheritance graph. You may use it or not as you like: it is only here to
- * provide a container for the supplied methods.
- */
 class ClassTable {
 	private int semantErrors;
 	private PrintStream errorStream;
