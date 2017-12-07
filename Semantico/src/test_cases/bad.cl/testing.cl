@@ -22,7 +22,7 @@ class Hash inherits Bash {
 };
 
 class Main inherits IO {
-	-- the class has features. Only methods in this case.
+
 
 
 	main(): Object {
@@ -55,14 +55,14 @@ class Main inherits IO {
 
 	fa : Int;
 
-	fib(i : Int, i : Int) : Int {	-- list of formals. And the return type of the method.
+	fib(i : Int, i : Int) : Int {	
 			let a : Int, 
 					b : Int <- (new Crash),
 					c : Int <- 0,
 					qw : Bash
 			in
 			{
-			fa <- (while (not i) loop	-- expressions are nested.
+			fa <- (while (not i) loop	
 			{
 				c <- "String";
 				i <- i - 1;
