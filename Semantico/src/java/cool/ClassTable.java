@@ -6,31 +6,12 @@ import java.util.Map.Entry;
 
 
 public class ClassTable {
-	private HashMap<String, ClassPlus> classes=new HashMap<String, ClassPlus>();		// for retrieving class related info and class attributes and features
-	private HashMap<String, Integer> height = new HashMap<String, Integer>();			// for retrieving class height in the inheritance hierarchy (for conformance check)
+	private HashMap<String, ClassPlus> classes=new HashMap<String, ClassPlus>();		
+	private HashMap<String, Integer> height = new HashMap<String, Integer>();			
 	public List<Error> errors = new ArrayList<Error>();
 	
 	public ClassTable() {
-		/* Classes already present in the table:
-		 * - Object
-		 * - IO
-		 * - String
-		 * - Int
-		 * - Bool
-		 * 
-		 * Object has methods:
-		 * - abort() : Object
-		 * - type_name(): String
-		 * IO has methods:
-		 * - out_string(x : String) : IO
-		 * - out_int(x : Int) : IO
-		 * - in_string() : String
-		 * - in_int() : String
-		 * String has methods:
-		 * - length() : Int
-		 * - concat(s: String) : String
-		 * - substr(i : Int, l : Int) : String
-		 */
+		
 		
 		HashMap<String, AST.method> ol = new HashMap <String, AST.method>();
 		ol.put("abort", new AST.method("abort", new ArrayList<AST.formal>(), "Object", new AST.no_expr(0), 0));
@@ -78,11 +59,7 @@ public class ClassTable {
 		classes.get("String").mlist.putAll(ol);		// String Inherits from Object
 	}
 	void insert(AST.class_ c) {
-		/* Whenever a new class is inserted,
-		 * - Inherits the attributes and methods of the parent class.
-		 * - Checks for multiple method or attribute definitions.
-		 * - Checks for correct method overrides and any attribute overrides
-		 */
+		
 		String pr = c.parent;
 		ClassPlus tc = new ClassPlus(c.name, c.parent, classes.get(c.parent).alist, classes.get(c.parent).mlist);	// adding the parents attribute list and method list
 
@@ -90,10 +67,7 @@ public class ClassTable {
 		HashMap <String, AST.attr> tc_alist = new HashMap<String, AST.attr>();
 		HashMap <String, AST.method> tc_mlist = new HashMap <String, AST.method>();
 		
-		/* Checks for the following errors within a class:
-		 * - multiple attribute definitions
-		 * - multiple method definitions
-		 */
+		
 		for(AST.feature e : c.features) {
 			if(e.getClass() == AST.attr.class) {
 				AST.attr ae = (AST.attr) e;
@@ -112,10 +86,7 @@ public class ClassTable {
 		}
 
 		
-		/* Checks for the following errors with respect to the inherited class:
-		 * - redefinition of an inherited attribute (Note: the class retains the inherited attribute and discards the attribute defined within the class)
-		 * - wrong redefinition of an inherited method (Note : the class retains the inherited method and discards the method defined within the class)
-		 */
+		
 		for(Entry<String, AST.attr> entry : tc_alist.entrySet()) {
 			if(tc.alist.containsKey(entry.getKey()))
 				errors.add(new Error(c.filename, entry.getValue().lineNo, "Attribute " + entry.getValue().name + " is an attribute of an inherited class"));
@@ -184,7 +155,7 @@ public class ClassTable {
 	String lca(String a, String b) {
 
 		if(a.equals(b)) return a;
-		else if(height.get(a) < height.get(b))		// a must always be deeper in the tree
+		else if(height.get(a) < height.get(b))		
 			return lca(b, a);
 		else
 			return lca(classes.get(a).parent, b);
