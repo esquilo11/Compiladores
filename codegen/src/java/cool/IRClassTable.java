@@ -6,34 +6,14 @@ import java.util.Map.Entry;
 
 
 public class IRClassTable {
-	private HashMap<String, IRClassPlus> classes=new HashMap<String, IRClassPlus>();		// for retrieving class related info and class attributes and features
-	private HashMap<String, Integer> height = new HashMap<String, Integer>();			// for retrieving class height in the inheritance hierarchy (for conformance check)
+	private HashMap<String, IRClassPlus> classes=new HashMap<String, IRClassPlus>();		
+	private HashMap<String, Integer> height = new HashMap<String, Integer>();			
 	
 	
 	public List<Error> errors = new ArrayList<Error>();
 	
 	public IRClassTable() {
-		/* Classes already present in the table:
-		 * - Object
-		 * - IO
-		 * - String
-		 * - Int
-		 * - Bool
-		 * 
-		 * Object has methods:
-		 * - abort() : Object
-		 * - type_name(): String
-		 * IO has methods:
-		 * - out_string(x : String) : IO
-		 * - out_int(x : Int) : IO
-		 * - in_string() : String
-		 * - in_int() : String
-		 * String has methods:
-		 * - length() : Int
-		 * - concat(s: String) : String
-		 * - substr(i : Int, l : Int) : String
-		 */
-
+		
 		List<AST.formal> obj_formal = new ArrayList<AST.formal>();
 		obj_formal.add(new AST.formal("this", "Object", 0));
 		
@@ -91,7 +71,6 @@ public class IRClassTable {
 		io_mlist.add(new AST.method("in_string", io_formal, "String", new AST.no_expr(0), 0));
 		io_mlist.add(new AST.method("in_int", io_formal, "Int", new AST.no_expr(0), 0));
 		
-		// redefine copy
 		io_mlist.set(2, new AST.method("copy", io_formal, "IO", new AST.no_expr(0), 0));
 		
 		HashMap <String, String> io_irname = new HashMap <String, String>();
@@ -101,25 +80,24 @@ public class IRClassTable {
 		io_irname.put("in_string", "@_ZN2IO9in_string");
 		io_irname.put("in_int", "@_ZN2IO9in_int");
 		
-		// change copy irname
 		io_irname.put("copy", "@_ZN2IO4copy");
 		
 		
 		classes.put("IO", new IRClassPlus("IO", "Object", new HashMap<String, AST.attr>(), iol, new HashMap<String, Integer> (), io_moffset, new ArrayList <AST.attr>(), io_mlist, io_irname));
-		classes.get("IO").mlist.putAll(ol);		// IO inherits from Object
+		classes.get("IO").mlist.putAll(ol);		
 		height.put("IO", 1);
 		classes.get("IO").attrList.add(new AST.attr("__Base", "Object" + ".Base", new AST.no_expr(0), 0));
 		classes.get("IO").attrOffset.put("__Base", 0);
 		
 		classes.put("Int", new IRClassPlus("Int", "Object", new HashMap<String, AST.attr>(), new HashMap<String, AST.method>(), new HashMap <String, Integer>(), obj_moffset, new ArrayList <AST.attr>(), obj_mlist, irname));
 		height.put("Int", 1);
-		classes.get("Int").mlist.putAll(ol);	// Int inherits from Object
-		classes.get("Int").methodList.get(2).typeid = "Int";	// redefine copy
+		classes.get("Int").mlist.putAll(ol);	
+		classes.get("Int").methodList.get(2).typeid = "Int";	
 		classes.get("Int").IRname.put("copy", "@_ZN3Int4copy");
 		
 		classes.put("Bool", new IRClassPlus("Bool", "Object", new HashMap<String, AST.attr>(), new HashMap<String, AST.method>(), new HashMap <String, Integer>(), obj_moffset, new ArrayList <AST.attr>(), obj_mlist, irname));
 		height.put("Bool", 1);
-		classes.get("Bool").mlist.putAll(ol);	// Bool inherits from Object
+		classes.get("Bool").mlist.putAll(ol);
 		classes.get("Int").methodList.get(2).typeid = "Bool";
 		classes.get("Bool").IRname.put("copy", "@_ZN4Bool4copy");
 		
@@ -158,22 +136,18 @@ public class IRClassTable {
 		str_irname.put("concat", "@_ZN6String6concat");
 		str_irname.put("substr", "@_ZN6String6substr");
 		
-		// change copy
+		
 		str_irname.put("copy", "@_ZN6String4copy");
 				
 		
 		
 		classes.put("String", new IRClassPlus("String", "Object", new HashMap<String, AST.attr>(), sl, new HashMap<String, Integer>(), str_moffset, new ArrayList <AST.attr>(), str_mlist, str_irname));
 		height.put("String", 1);
-		classes.get("String").mlist.putAll(ol);		// String Inherits from Object
+		classes.get("String").mlist.putAll(ol);		
 		classes.get("String").IRname.put("copy", "@_ZN5String4copy");
 	}
 	void insert(AST.class_ c) {
-		/* Whenever a new class is inserted,
-		 * - Inherits the attributes and methods of the parent class.
-		 * - Checks for multiple method or attribute definitions.
-		 * - Checks for correct method overrides and any attribute overrides
-		 */
+		
 		String pr = c.parent;
 		IRClassPlus tc = new IRClassPlus(c.name, c.parent, classes.get(pr).alist, classes.get(pr).mlist, new HashMap <String, Integer>(),
 				classes.get(pr).methodOffset, new ArrayList <AST.attr> (), classes.get(pr).methodList, classes.get(pr).IRname);	// adding the parents attribute list and method list
@@ -185,23 +159,10 @@ public class IRClassTable {
 		tc.attrList.add(new AST.attr("__Base", pr + ".Base", new AST.no_expr(0), 0));
 		tc.attrOffset.put("__Base", 0);
 	
-		/* Checks for the following errors with respect to the inherited class:
-		 * - redefinition of an inherited attribute (Note: the class retains the inherited attribute and discards the attribute defined within the class)
-		 * - wrong redefinition of an inherited method (Note : the class retains the inherited method and discards the method defined within the class)
-		 */
-		/* adding attrs of parent */
+		
 		for(Entry<String, AST.attr> entry : tc_alist.entrySet()) {
 			tc.alist.put(entry.getKey(), entry.getValue());
 		}
-		
-		/* attrs of the parent are accessed via the base attr */
-		
-		
-		/* Checks for the following errors within a class:
-		 * - multiple attribute definitions
-		 * - multiple method definitions
-		 */
-		/* adding attrs and methods of class */
 		
 		int attr_ptr = 1;
 		
@@ -219,15 +180,15 @@ public class IRClassTable {
 			}
 		}
 		
-		// change the copy method name
+		
 		tc.IRname.put("copy", "@_ZN" + tc.name.length() + tc.name + "4copy");
 		
-		// tc_mlist contains methods in current class
+		
 		
 		int method_ptr = tc.methodList.size();
 		for(Entry<String, AST.method> entry : tc_mlist.entrySet()) {
 			String me_name = entry.getKey();
-			if(tc.mlist.containsKey(entry.getKey())) {		// overloaded method
+			if(tc.mlist.containsKey(entry.getKey())) {		
 				tc.methodList.set(tc.methodOffset.get(me_name), entry.getValue());
 				tc.IRname.put(me_name, "@_ZN" + tc.name.length() + tc.name + me_name.length() + me_name);
 			} else {
@@ -267,7 +228,7 @@ public class IRClassTable {
 	String lca(String a, String b) {
 
 		if(a.equals(b)) return a;
-		else if(height.get(a) < height.get(b))		// a must always be deeper in the tree
+		else if(height.get(a) < height.get(b))		
 			return lca(b, a);
 		else
 			return lca(classes.get(a).parent, b);
