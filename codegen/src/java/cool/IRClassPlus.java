@@ -2,12 +2,6 @@ package cool;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-/* For each class, we have a list of methods and a list of attributes. Additionally, we have a hashmap that stores
- * offsets of both methods and attributes.
- * 
- */
-
-
 public class IRClassPlus {
 	public String name;
 	public String parent = null;
