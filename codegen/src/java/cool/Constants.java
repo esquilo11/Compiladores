@@ -6,16 +6,8 @@ import java.util.Map;
 
 public class Constants {
 
-	/* layout specification separated by -
-	 * e: little endian format
-	 * m: mangling i.e. names are mangled in the output	 
-	 * then alignment for integer type.
-	 * > taken from clang++ output
-	 */
 	static final String DATA_LAYOUT = "target datalayout = \"e-m:e-i64:64-f80:128-n8:16:32:64-S128\"";
-	/*
-	 * target triple specifies target host
-	 */
+
 	static final String TARGET_TRIPLE = "target triple = \"x86_64-unknown-linux-gnu\"";
 	
 	static final String CMETHOD_HELPERS = "@strformatstr = private unnamed_addr constant [3 x i8] c\"%s\\00\", align 1\n"
@@ -34,7 +26,7 @@ public class Constants {
 			+ "declare i8* @malloc(i64)\n"
 			+ "declare void @exit(i32)";
 	
-	public static final Map<String, String>  FC_TYPES = Collections.unmodifiableMap(		/* First Class */
+	public static final Map<String, String>  FC_TYPES = Collections.unmodifiableMap(		
 			new HashMap<String, String>() {{
 				put("Int", "i32");
 				put("Bool", "i32");
@@ -148,10 +140,4 @@ public class Constants {
 			+ "ret void\n"
 			+ "}\n";
 
-	/* Note that each class inherits from class Object. 
-	/*
-	 * Methods default
-	 * Object: abort();
-	 * void (void) * _ZN5Object5abortEv(%class.Object* %this)
-	 */
 }
