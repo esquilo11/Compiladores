@@ -23,10 +23,10 @@ public class Codegen{
 	int strCount = 0;
 	
 	public Codegen(AST.program program, PrintWriter out){
-		//Write Code generator code here
+		
         out.println("; I am a comment in LLVM-IR. Feel free to remove me.");
        
-        // go through all classes. For each class make object structures, then include virtual table for a class.
+        
         CodegenInit(out);
         
         IRclassTable = new IRClassTable();
@@ -64,7 +64,7 @@ public class Codegen{
         {
 			if(!(e.name.equals("Main")))
 			{
-				//List<AST.feature> theFeatures = new ArrayList<AST.feature>();
+				
         		theFeatures = theClass.features;
 
 				for(int i = 0; i < theFeatures.size(); ++i)
@@ -112,7 +112,7 @@ public class Codegen{
 	private void ProcessStr(AST.expression expr_str, PrintWriter out)
 	{
 		
-		// assign
+		
 		if(expr_str.getClass() == AST.assign.class)
 		{
 			AST.assign str = (AST.assign)expr_str;
@@ -121,7 +121,7 @@ public class Codegen{
 		}
 
 
-		// static dispatch
+		
 		else if(expr_str.getClass() == AST.static_dispatch.class)
 		{
 			AST.static_dispatch str = (AST.static_dispatch)expr_str;
@@ -166,7 +166,7 @@ public class Codegen{
 		}
 
 
-		// if-then-else
+		
 		else if(expr_str.getClass() == AST.cond.class)
 		{
 			AST.cond str = (AST.cond)expr_str;
@@ -201,7 +201,7 @@ public class Codegen{
 		}
 
 
-		// let
+		
 		else if(expr_str.getClass() == AST.let.class)
 		{
 			AST.let str = (AST.let)expr_str;
@@ -226,7 +226,7 @@ public class Codegen{
 		}
 
 
-		// block
+	
 		else if(expr_str.getClass() == AST.block.class)
 		{
 			AST.block str = (AST.block)expr_str;
@@ -250,7 +250,7 @@ public class Codegen{
 		}
 
 
-		// while loop
+	
 		else if(expr_str.getClass() == AST.loop.class)
 		{
 			AST.loop str = (AST.loop)expr_str;
@@ -275,7 +275,7 @@ public class Codegen{
 		}
 
 		
-		// typcase
+		
 		else if(expr_str.getClass() == AST.typcase.class)
 		{
 			AST.typcase str = (AST.typcase)expr_str;
@@ -309,7 +309,7 @@ public class Codegen{
 		}
 
 
-		// comparision operator (less than jaisa)
+	
 		else if(expr_str.getClass() == AST.eq.class)
 		{
 			AST.eq str = (AST.eq)expr_str;
@@ -334,7 +334,7 @@ public class Codegen{
 
 
 
-		// string const
+		
 		else if(expr_str.getClass() == AST.string_const.class)
 		{
 			AST.string_const str = (AST.string_const)expr_str;
@@ -352,7 +352,6 @@ public class Codegen{
 	}
 	
 	
-	// given a method, get its type signature
 	private String getIRType(String typeid) {
 		if(Constants.FC_TYPES.containsKey(typeid)) {
 			return Constants.FC_TYPES.get(typeid);
@@ -390,7 +389,7 @@ public class Codegen{
 			}
 			out.print(" )* ");
 			
-			// now name of method
+			
 			out.print(irclass.IRname.get(me.name));
 			out.print(" to i8*)");
 		}
@@ -398,7 +397,7 @@ public class Codegen{
 	}
 	
 
-	/* A constructor for all base types is required */
+
 	
 	private void EmitMethods(IRClassPlus irclass, PrintWriter out) {
 		if(irclass.name.equals("Int") || irclass.name.equals("Bool")) return;
@@ -409,7 +408,7 @@ public class Codegen{
 			out.println(Constants.STRING_SUBSTR);
 		} else if(irclass.name.equals("Object")) {
 			out.println(Constants.OBJECT_ABORT);
-			// constructor for base type
+		
 			out.println(Constants.OBJECT_BASE);
 			out.println(Constants.OBJECT_TYPENAME);
 		} else if(irclass.name.equals("IO")) {
@@ -441,13 +440,13 @@ public class Codegen{
 	private void ProcessGraph(List <AST.class_> classes, PrintWriter out) {
 			
 	
-		Integer sz = 0;		// stores the number of classes
+		Integer sz = 0;		
 		idxCont = new HashMap <String, AST.class_> ();
 		HashMap <String, Integer> classIdx = new HashMap <String, Integer> ();
 		idxName = new HashMap <Integer, String>();
 		classGraph = new ArrayList < ArrayList <Integer> >();
 
-		/* Laying the groundwork */
+		
 		classIdx.put("Object", 0);
 		idxName.put(0, "Object");
 		classIdx.put("IO", 1);
@@ -458,39 +457,31 @@ public class Codegen{
 		idxName.put(0, "Object");
 		idxName.put(1, "IO");
 		
-		sz = sz + 2;	// IO and Object (2 classes) already present
+		sz = sz + 2;	
 		
-		/* Checking for :
-		 * - bad redefinitions
-		 * - bad inheritance
-		 * Also : assigning an integer corresponding to each class.
-		 */
+	
 		for(AST.class_ e : classes) {
-			idxName.put(sz, e.name);			// Reverse lookup. Integer -> className
-			classIdx.put(e.name, sz++);			// className -> Integer
-			idxCont.put(e.name, e);				// getting the class from name. Used later.
+			idxName.put(sz, e.name);			
+			classIdx.put(e.name, sz++);			
+			idxCont.put(e.name, e);				
 			classGraph.add(new ArrayList <Integer> ());
 		}
 
 
-		
-		/* We are creating an undirected graph in this method.
-		 * Also: Checking for - undefined parent class error
-		 */
 		for(AST.class_ e : classes) {
 			int u = classIdx.get(e.parent);
 			int v = classIdx.get(e.name);
-			classGraph.get(u).add(v);			// adding an edge from parent -> child in the graph
+			classGraph.get(u).add(v);			
 		}
 		
 		
-		/* Class Declarations here */
+		
 		Queue<Integer> q = new LinkedList<Integer>();				
 		q.clear(); q.offer(0);
 		while (!q.isEmpty()) {
 			int u = q.poll();
 			if(u != 1 && u != 0) {
-				IRclassTable.insert(idxCont.get(idxName.get(u)));		// insert classes in BFS-order so that methods and attributes can be inherited.
+				IRclassTable.insert(idxCont.get(idxName.get(u)));		
 			}
 			EmitClassDecl(IRclassTable.getIRClassPlus(idxName.get(u)), out);
 			for(Integer v : classGraph.get(u)) {
@@ -499,28 +490,7 @@ public class Codegen{
 		
 		}
 
-		/* prints comdat any */
-		/*
-		q.clear(); q.offer(0);
-		HashMap <String, Boolean> mentioned = new HashMap<String, Boolean>();
-		while (!q.isEmpty()) {
-			int u = q.poll();
-			IRClassPlus irc = IRclassTable.getIRClassPlus(idxName.get(u));
-			for(Entry<String, String> entry : irc.IRname.entrySet()) {
-				if(mentioned.containsKey(entry.getValue()) == false) {
-					String mod_name = entry.getValue();
-					// change first character to dollar
-					out.print(mod_name + " = " + " comdat any ");
-				}
-			}
-			for(Integer v : classGraph.get(u)) {
-				q.offer(v);
-			}
-		
-		}
-		*/
-
-		/* prints virtual table */
+	
 		q.clear(); q.offer(0);
 		while (!q.isEmpty()) {
 			int u = q.poll();
@@ -530,7 +500,7 @@ public class Codegen{
 			}
 		}
 		
-		/* prints definitions */
+		
 		q.clear(); q.offer(0);
 		while (!q.isEmpty()) {
 			int u = q.poll();
