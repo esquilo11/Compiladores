@@ -1,4 +1,3 @@
-// Generated from CoolLexer.g4 by ANTLR 4.5.1
 package cool;
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.CharStream;
@@ -65,9 +64,6 @@ public class CoolLexer extends Lexer {
 	};
 	public static final Vocabulary VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
 
-	/**
-	 * @deprecated Use {@link #VOCABULARY} instead.
-	 */
 	@Deprecated
 	public static final String[] tokenNames;
 	static {
